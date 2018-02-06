@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
                 template="WEB-INF/template.xhtml">
 
     <ui:define name="page_title">
@@ -8,22 +9,22 @@
     </ui:define>
     <ui:define name="page_body">
 
-        <h:form>
+        <h:form action="" id="main_form">
             <p:panelGrid>
 
                 <h:outputText value="Идентефикатор"/>
-                <h:inputText value="#{productsListBean.newProduct.id} "/>
+                <p:inputText value="#{productsListBean.newProduct.id}"/>
 
                 <h:outputText value="Наименование"/>
-                <h:inputText value="#{productsListBean.newProduct.name} "/>
+                <p:inputText value="#{productsListBean.newProduct.name}"/>
 
                 <h:outputText value="Цена"/>
-                <h:inputTextarea value="#{productsListBean.newProduct.price} "/>
+                <p:inputText value="#{productsListBean.newProduct.price}"/>
 
 
-                <p:commandButton value="Создать"  id="nonAjax"
-                                 action="#{productsListBean.createNewProduct()}"
-                                 update="tableProduct" ajax="true" />
+                <p:commandButton value="Создать"
+                                 action="#{productsListBean.createNewProduct}"
+                                 update="table_products"/>
 
             </p:panelGrid>
 
@@ -31,7 +32,7 @@
         </h:form>
 
 
-        <p:dataTable value="#{productsListBean.products}" var="product" id="tableProduct">
+        <p:dataTable value="#{productsListBean.products}" var="product" id="table_products">
 
             <p:column>
                 <h:outputText value="#{product.name}"/>
