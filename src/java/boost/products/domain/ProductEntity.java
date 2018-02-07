@@ -1,12 +1,16 @@
-package boost.products;
+package boost.products.domain;
 
-import java.security.SecureRandom;
 
-public class Product {
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
+public class ProductEntity {
+
+    @Id
     private long id;
     private String name;
-    private  long price;
+    private long price;
 
     public long getId() {
         return id;
