@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+//Получение списка товаров и завести новый товар
 @Named
 @SessionScoped
 public class ProductsListBean implements Serializable {
