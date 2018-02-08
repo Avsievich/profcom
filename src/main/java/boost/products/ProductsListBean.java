@@ -20,7 +20,7 @@ public class ProductsListBean implements Serializable {
 
     public List<Product> getProducts() {
         List<Product> result = new ArrayList<Product>();
-        List<ProductEntity> entities = productsManagerBean.readList(1, 100);
+        List<ProductEntity> entities = productsManagerBean.readList(0, 10);
         for (ProductEntity productEntity : entities) {
             result.add(productEntity.toDto());
         }

@@ -20,7 +20,7 @@ import java.util.List;
 @Stateless
 public class ProductsManagerBean {
 
-    @PersistenceContext(unitName = "examplePU")
+    @PersistenceContext(unitName="examplePU")
     private EntityManager entityManager;
 
 
@@ -30,16 +30,18 @@ public class ProductsManagerBean {
     public boolean create(ProductEntity productEntity) {
         // проверяем все ли поля заполнены
         if (checkValid(productEntity)) {
-            return false;
+            // проверяем на существование обьекта
+            ProductEntity existingProduct = entityManager.find(ProductEntity.class, productEntity.getId());
+            if (existingProduct != null) {
+                return false;
+            }
+            // добавляем оьект в базу данных
+            entityManager.persist(productEntity);
+            return true;
+
         }
-        // проверяем на существование обьекта
-        ProductEntity existingProduct = entityManager.find(ProductEntity.class, productEntity.getId());
-        if (existingProduct != null) {
-            return false;
-        }
-        // добавляем оьект в базу данных
-        entityManager.persist(productEntity);
-        return true;
+        return false;
+
     }
 
     // Получение обьектов из БД
@@ -52,7 +54,7 @@ public class ProductsManagerBean {
     // Получение обьектов из БД списком
     public List<ProductEntity> readList(int offset, int limit) {
         if (offset < 0 || limit < 1) {
-            return Collections.emptyList();
+            return null;
         }
         TypedQuery<ProductEntity> query = entityManager.createQuery(
                 "SELECT entity from ProductEntity entity"
