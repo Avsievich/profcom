@@ -9,7 +9,7 @@
     </ui:define>
     <ui:define name="page_body">
 
-        <h:form >
+        <h:form>
             <p:panelGrid>
                 <h:outputText value="Наименование"/>
                 <p:inputText value="#{productsListBean.newProduct.name}"/>
@@ -25,20 +25,26 @@
             </p:panelGrid>
 
 
+            <p:dataTable value="#{productsListBean.products}" var="product" id="table_products">
+
+                <p:column>
+                    <h:outputText value="#{product.name}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{product.price}"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton value="Удалить" actionListener="#{productsListBean.deleteProduct(product.id)}" update="table_products">
+                        <p:confirm header="Удаление продукта" message="Вы точно хотите удалить?" icon="ui-icon-alert"/>
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="ДА" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                        <p:commandButton value="НЕТ" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                    </p:confirmDialog>
+                </p:column>
+
+            </p:dataTable>
         </h:form>
-
-
-        <p:dataTable value="#{productsListBean.products}" var="product" id="table_products">
-
-            <p:column>
-                <h:outputText value="#{product.name}"/>
-            </p:column>
-            <p:column>
-                <h:outputText value="#{product.price}"/>
-            </p:column>
-
-
-        </p:dataTable>
 
     </ui:define>
 

@@ -22,7 +22,7 @@ public class ProductsListBean implements Serializable {
 
     public List<Product> getProducts() {
         List<Product> result = new ArrayList<Product>();
-        List<ProductEntity> entities = productsManagerBean.readList(0, 10);
+        List<ProductEntity> entities = productsManagerBean.readList(0, 100);
         for (ProductEntity productEntity : entities) {
             result.add(productEntity.toDto());
         }
@@ -40,6 +40,11 @@ public class ProductsListBean implements Serializable {
 
         productsManagerBean.create(productEntity);
         newProduct = new Product();
+    }
+
+    public void  deleteProduct(long id){
+        productsManagerBean.delete(id);
+
     }
 
 

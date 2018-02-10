@@ -85,7 +85,7 @@ public class ProductsManagerBean {
     public boolean delete(long id) {
         // проверяем на существование обьекта
         ProductEntity existingEntity = entityManager.find(ProductEntity.class, id);
-        if (existingEntity != null) {
+        if (existingEntity == null) {
             return false;
         }
         //  удаляем обьект в базе данных
