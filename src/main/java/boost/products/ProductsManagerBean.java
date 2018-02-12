@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,23 +21,25 @@ import java.util.List;
 @Stateless
 public class ProductsManagerBean {
 
-    @PersistenceContext(unitName="examplePU")
+    @PersistenceContext(unitName = "examplePU")
     private EntityManager entityManager;
 
 
     //CRUD
 
     // Добавляем обьект в БД
-    public boolean create(ProductEntity productEntity) {
+    public boolean create(Product product) {
         // проверяем все ли поля заполнены
-        if (checkValid(productEntity)) {
+        if (checkValid(product)) {
             // проверяем на существование обьекта
-            ProductEntity existingProduct = entityManager.find(ProductEntity.class, productEntity.getId());
+            ProductEntity existingProduct = entityManager.find(ProductEntity.class, product.getId());
             if (existingProduct != null) {
                 return false;
             }
             // добавляем оьект в базу данных
-            entityManager.persist(productEntity);
+            existingProduct = new ProductEntity();
+            existingProduct.fromDto(product);
+            entityManager.persist(existingProduct);
             return true;
 
         }
@@ -45,14 +48,18 @@ public class ProductsManagerBean {
     }
 
     // Получение обьектов из БД
-    public ProductEntity read(long id) {
-
+    public Product read(long id) {
         // выбераем данные по id
-        return entityManager.find(ProductEntity.class, id);
+        ProductEntity productEntity = entityManager.find(ProductEntity.class, id);
+
+        if (productEntity == null) {
+            return null;
+        }
+        return productEntity.toDto();
     }
 
     // Получение обьектов из БД списком
-    public List<ProductEntity> readList(int offset, int limit) {
+    public List<Product> readList(int offset, int limit) {
         if (offset < 0 || limit < 1) {
             return null;
         }
@@ -61,23 +68,37 @@ public class ProductsManagerBean {
                 , ProductEntity.class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
-        return query.getResultList();
+
+        List<ProductEntity> productEntities = query.getResultList();
+        if (productEntities == null || productEntities.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Product> result = new ArrayList<Product>(productEntities.size());
+        for (ProductEntity productEntity : productEntities) {
+
+            result.add(productEntity.toDto());
+        }
+        return result;
+
+
     }
 
     //  Обнавляем обьект в базе данных
-    public boolean update(ProductEntity productEntity) {
+    public boolean update(Product product) {
         // проверяем все ли поля заполнены
-        if (checkValid(productEntity)) {
-            return false;
+        if (checkValid(product)) {
+            // проверяем на существование обьекта
+            ProductEntity existingProduct = entityManager.find(ProductEntity.class, product.getId());
+            if (existingProduct == null) {
+                return false;
+            }
+            //  обнавляем обьект в базе данных
+            existingProduct.fromDto(product);
+            entityManager.merge(existingProduct);
+            return true;
+
         }
-        // проверяем на существование обьекта
-        ProductEntity existingProduct = entityManager.find(ProductEntity.class, productEntity.getId());
-        if (existingProduct == null) {
-            return false;
-        }
-        //  обнавляем обьект в базе данных
-        entityManager.merge(productEntity);
-        return true;
+        return false;
 
     }
 
@@ -94,10 +115,10 @@ public class ProductsManagerBean {
     }
 
     //    Проверяем на заполниность пораметров
-    private boolean checkValid(ProductEntity productEntity) {
-        return productEntity != null &&
-                !StringUtils.isEmpty(productEntity.getName()) &&
-                productEntity.getPrice() > 0;
+    private boolean checkValid(Product product) {
+        return product != null &&
+                !StringUtils.isEmpty(product.getName()) &&
+                product.getPrice() > 0;
 
     }
 

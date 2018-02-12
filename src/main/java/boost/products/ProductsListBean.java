@@ -19,32 +19,37 @@ public class ProductsListBean implements Serializable {
     @EJB
     private ProductsManagerBean productsManagerBean;
     private Product newProduct = new Product();
+    private Product editingProduct;
 
     public List<Product> getProducts() {
-        List<Product> result = new ArrayList<Product>();
-        List<ProductEntity> entities = productsManagerBean.readList(0, 100);
-        for (ProductEntity productEntity : entities) {
-            result.add(productEntity.toDto());
-        }
-        return result;
-
+        return productsManagerBean.readList(0, 100);
     }
 
     public Product getNewProduct() {
         return newProduct;
     }
 
-    public void createNewProduct() {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.fromDto(newProduct);
+    public Product getEditingProduct() {
+        return editingProduct;
+    }
 
-        productsManagerBean.create(productEntity);
+    public void setEditingProduct(Product editingProduct) {
+        this.editingProduct = editingProduct;
+    }
+
+    public void createNewProduct() {
+        productsManagerBean.create(newProduct);
         newProduct = new Product();
     }
 
-    public void  deleteProduct(long id){
+    public void deleteProduct(long id) {
         productsManagerBean.delete(id);
 
+    }
+
+    public void  saveProduct(){
+
+        productsManagerBean.update(editingProduct);
     }
 
 
